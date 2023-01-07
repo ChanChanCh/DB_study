@@ -277,4 +277,82 @@ public class DbTest {
 
     }
 
+    public void dbDelete(){
+        String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
+        String dbUserId = "root";
+        String dbPassword = "zerobase";
+
+        try {
+            //드라이버 로드하는 부분
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        String memberTypeValue = "email";
+        String userIdValue = "testinsert@naver.com";
+
+
+        try {
+            // 커넥션 객체생성하는 부분
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+
+            String sql = " delete from member " +
+                    "where member_type = ? and user_id = ? ";
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,memberTypeValue);
+            preparedStatement.setString(2,userIdValue);
+
+            int affected  = preparedStatement.executeUpdate();
+
+            if(affected > 0) {
+                System.out.println(" 삭제 성공 ");
+            }else {
+                System.out.println(" 삭제 실패 ");
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            /*
+            반드시 실행하는 문장! 위에서 if문을돌리면 특정조건에 의해 if문이 안돌아오는 경우도 생기기때문에 여기에서
+            if문을 사용하여 rs / statement / connection 을 close() 해주어야한다
+
+            */
+
+
+            try {
+                if(rs != null && !rs.isClosed()){
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if(preparedStatement != null && !preparedStatement.isClosed()) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
 }

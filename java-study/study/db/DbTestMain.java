@@ -8,7 +8,8 @@ public class DbTestMain {
         DbTest dbTest = new DbTest();
         //dbTest.dbSelect();
         //dbTest.dbInsert();
-        dbTest.dbUpdate();
+//        dbTest.dbUpdate();
+        dbTest.dbDelete();
 
     }
 

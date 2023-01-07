@@ -34,7 +34,7 @@ public class DbTest {
         }
 
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet rs = null;
         /*
             sql 로 불러올 데이터 member_type은 언제든 바뀔수 있다면 이렇게 처리하는게 편하긴하다
@@ -56,13 +56,16 @@ public class DbTest {
             CallableStatement callableStatement = null; ( 스토어드프로시저(Stored Procedure)를 실행시키기 위해 사용되는 인터페이스)
         */
 
-            statement = connection.createStatement();
 
             String sql = "select member_type, user_id, password, name" +
                     " from member " +
-                    " where member_type = '" + memberTypeValue + "' ";
-                        // 4. 쿼리실행  excute가 쿼를 실행하는 부분이다
-            rs = statement.executeQuery(sql);
+                    " where member_type = ? ";
+                        // 쿼리설정을 prepareStatement에서 해줬으므로 아래의 executeQuery는 비워준다
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,memberTypeValue);
+
+
+            rs = preparedStatement.executeQuery();
 
             while(rs.next()) {
 
@@ -79,8 +82,8 @@ public class DbTest {
                 rs.close();
             }
 
-            if(!statement.isClosed()) {
-                statement.close();
+            if(!preparedStatement.isClosed()) {
+                preparedStatement.close();
             }
 
             if (!connection.isClosed()) {
@@ -106,8 +109,8 @@ public class DbTest {
             }
 
             try {
-                if(statement != null && !statement.isClosed()) {
-                    statement.close();
+                if(preparedStatement != null && !preparedStatement.isClosed()) {
+                    preparedStatement.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

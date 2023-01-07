@@ -2,7 +2,7 @@ package study.db;
 
 import java.sql.*;
 
-public class DbTest {
+public class MemberService {
 
     public void dbSelect(){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
@@ -111,7 +111,13 @@ public class DbTest {
 
     }
 
-    public void dbInsert(Member member){
+
+    /**
+     * 회원 가입 함수
+     * @param member 회원정보
+     */
+
+    public void register(Member member){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
         String dbUserId = "root";
         String dbPassword = "zerobase";
@@ -271,7 +277,10 @@ public class DbTest {
 
     }
 
-    public void dbDelete(){
+    /**
+     * 회원 탈퇴 함수
+     */
+    public void withdraw(Member member){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
         String dbUserId = "root";
         String dbPassword = "zerobase";
@@ -287,9 +296,6 @@ public class DbTest {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
-        String memberTypeValue = "email";
-        String userIdValue = "testinsert@naver.com";
-
 
         try {
             // 커넥션 객체생성하는 부분
@@ -299,15 +305,15 @@ public class DbTest {
                     "where member_type = ? and user_id = ? ";
 
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,memberTypeValue);
-            preparedStatement.setString(2,userIdValue);
+            preparedStatement.setString(1, member.getMemberType());
+            preparedStatement.setString(2, member.getUserId());
 
             int affected  = preparedStatement.executeUpdate();
 
             if(affected > 0) {
-                System.out.println(" 삭제 성공 ");
+                System.out.println(" 회원 탈퇴 성공 ");
             }else {
-                System.out.println(" 삭제 실패 ");
+                System.out.println(" 회원 탈퇴 실패 ");
             }
 
 

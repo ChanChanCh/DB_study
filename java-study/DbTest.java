@@ -33,11 +33,21 @@ public class DbTest {
             e.printStackTrace();
         }
 
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        /*
+            sql 로 불러올 데이터 member_type은 언제든 바뀔수 있다면 이렇게 처리하는게 편하긴하다
+            하지만 해커들은        String memberTypeValue = "email' or 1 = 1";
+            이런식으로 쿼리 파라미터를 조작하여 sql injection 공격을 하기 때문에
+            파라미터를 단순히 더하는 방식으로 날코딩하면 위험하다
+        */
+        String memberTypeValue = "email";
 
 
         try {
             // 커넥션 객체생성하는 부분
-            Connection connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
         /*
              3. 스테이트 먼트객체는 아래와 같이 3가지가 존재한다
 
@@ -46,13 +56,13 @@ public class DbTest {
             CallableStatement callableStatement = null; ( 스토어드프로시저(Stored Procedure)를 실행시키기 위해 사용되는 인터페이스)
         */
 
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
 
             String sql = "select member_type, user_id, password, name" +
                     " from member " +
-                    " where member_type = 'email' ";
+                    " where member_type = '" + memberTypeValue + "' ";
                         // 4. 쿼리실행  excute가 쿼를 실행하는 부분이다
-            ResultSet rs = statement.executeQuery(sql);
+            rs = statement.executeQuery(sql);
 
             while(rs.next()) {
 
@@ -76,9 +86,41 @@ public class DbTest {
             if (!connection.isClosed()) {
                 connection.close();
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            /*
+            반드시 실행하는 문장! 위에서 if문을돌리면 특정조건에 의해 if문이 안돌아오는 경우도 생기기때문에 여기에서
+            if문을 사용하여 rs / statement / connection 을 close() 해주어야한다
+
+            */
+
+
+            try {
+                if(rs != null && !rs.isClosed()){
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if(statement != null && !statement.isClosed()) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }

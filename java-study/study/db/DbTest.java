@@ -111,7 +111,7 @@ public class DbTest {
 
     }
 
-    public void dbInsert(){
+    public void dbInsert(String memberType, String userId, String password, String name){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
         String dbUserId = "root";
         String dbPassword = "zerobase";
@@ -127,12 +127,6 @@ public class DbTest {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
 
-        String memberTypeValue = "email";
-        String userIdValue = "testInsert2@naver.com";
-        String passwordValue = "7722";
-        String nameValue = "test2";
-
-
         try {
             // 커넥션 객체생성하는 부분
             connection = DriverManager.getConnection(url, dbUserId, dbPassword);
@@ -141,10 +135,10 @@ public class DbTest {
                     " values (?, ?, ?, ?); ";
 
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,memberTypeValue);
-            preparedStatement.setString(2,userIdValue);
-            preparedStatement.setString(3,passwordValue);
-            preparedStatement.setString(4,nameValue);
+            preparedStatement.setString(1,memberType);
+            preparedStatement.setString(2,userId);
+            preparedStatement.setString(3,password);
+            preparedStatement.setString(4,name);
 
             int affected  = preparedStatement.executeUpdate();
 

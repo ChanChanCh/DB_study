@@ -1,17 +1,10 @@
+package study.db;
+
 import java.sql.*;
 
 public class DbTest {
 
-    // db를 접속하기 위해서는 5개가 필요하다
-    // 1. ip(domain)
-    // 2.   port
-    // 3.   계정
-    // 4.   패스워드
-    // 5.   인스턴스
-
-    public static void main(String[] args) {
-        System.out.println("Hello");
-
+    public void dbSelect(){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
         String dbUserId = "root";
         String dbPassword = "zerobase";
@@ -60,7 +53,7 @@ public class DbTest {
             String sql = "select member_type, user_id, password, name" +
                     " from member " +
                     " where member_type = ? ";
-                        // 쿼리설정을 prepareStatement에서 해줬으므로 아래의 executeQuery는 비워준다
+            // 쿼리설정을 prepareStatement에서 해줬으므로 아래의 executeQuery는 비워준다
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1,memberTypeValue);
 
@@ -76,18 +69,6 @@ public class DbTest {
 
                 System.out.println(memberType + ", " + userId + ", " + password + ", " + name);
 
-            }
-
-            if(!rs.isClosed()){
-                rs.close();
-            }
-
-            if(!preparedStatement.isClosed()) {
-                preparedStatement.close();
-            }
-
-            if (!connection.isClosed()) {
-                connection.close();
             }
 
         } catch (SQLException e) {
@@ -125,6 +106,92 @@ public class DbTest {
             }
 
         }
+
+
+
+    }
+    
+    public void dbInsert(){
+        String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
+        String dbUserId = "root";
+        String dbPassword = "zerobase";
+
+        try {
+            //드라이버 로드하는 부분
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        String memberTypeValue = "email";
+        String userIdValue = "testInsert2@naver.com";
+        String passwordValue = "7722";
+        String nameValue = "test2";
+
+
+        try {
+            // 커넥션 객체생성하는 부분
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+
+            String sql = " insert into member (member_type, user_id, password, name) " +
+                    " values (?, ?, ?, ?); ";
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,memberTypeValue);
+            preparedStatement.setString(2,userIdValue);
+            preparedStatement.setString(3,passwordValue);
+            preparedStatement.setString(4,nameValue);
+
+            int affected  = preparedStatement.executeUpdate();
+
+            if(affected > 0) {
+                System.out.println(" 저장 성공 ");
+                }else {
+                    System.out.println(" 저장 실패 ");
+                }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            /*
+            반드시 실행하는 문장! 위에서 if문을돌리면 특정조건에 의해 if문이 안돌아오는 경우도 생기기때문에 여기에서
+            if문을 사용하여 rs / statement / connection 을 close() 해주어야한다
+
+            */
+
+
+            try {
+                if(rs != null && !rs.isClosed()){
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if(preparedStatement != null && !preparedStatement.isClosed()) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
 
     }
 

@@ -24,7 +24,14 @@ public class DbTestMain {
         System.out.println("이름입력:>>>");
         String name = scanner.next();
 
-        dbTest.dbInsert(memberType, userID, password, name);
+        Member member = new Member();
+        member.setMemberType(memberType);
+        member.setUserId(userID);
+        member.setPassword(password);
+        member.setName(name);
+
+
+        dbTest.dbInsert(member);
 
 
 

@@ -111,7 +111,7 @@ public class DbTest {
 
     }
 
-    public void dbInsert(String memberType, String userId, String password, String name){
+    public void dbInsert(Member member){
         String url = "jdbc:mariadb://172.30.1.93:3306/testdb3";
         String dbUserId = "root";
         String dbPassword = "zerobase";
@@ -135,10 +135,10 @@ public class DbTest {
                     " values (?, ?, ?, ?); ";
 
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,memberType);
-            preparedStatement.setString(2,userId);
-            preparedStatement.setString(3,password);
-            preparedStatement.setString(4,name);
+            preparedStatement.setString(1, member.getMemberType());
+            preparedStatement.setString(2, member.getUserId());
+            preparedStatement.setString(3, member.getPassword());
+            preparedStatement.setString(4, member.getName());
 
             int affected  = preparedStatement.executeUpdate();
 
